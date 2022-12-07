@@ -4,11 +4,11 @@ bot = telebot.TeleBot('5833315479:AAFMlEAzJLHzOyY-EsrUvWCKT6vB-ZjxyNg')
 
 def getsch(dayOfWeek):
 	try:
-		text = schedule.formtext('C:/Python/scripts/files/schedule.pdf')
+		text = schedule.getsch('schedule.pdf')
 	except Exception as e:
 		return 'Файл с расписанием не найден' + '\n' + str(e)
 
-	return schedule.get_by_day_of_week(text, dayOfWeek)
+	return schedule.sch_by_dow(text, dayOfWeek)
 	
 @bot.message_handler(commands=["start"])
 def start(m, res=False):
