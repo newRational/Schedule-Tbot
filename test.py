@@ -15,9 +15,7 @@ def clean_test(filename):
 	print(text)
 
 def by_day_test(filename):
-	days = schedule.getsch(filename)
-	text = schedule.sch_by_dow(days, 'пон')
-	print(text)
+	print(schedule.get_schedule('S-Б21-505.txt', 'пон'))
 
 # raw_test(filename)
 # clean_test(filename)

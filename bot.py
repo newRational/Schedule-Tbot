@@ -1,14 +1,15 @@
 import schedule, telebot
 
-bot = telebot.TeleBot('5833315479:AAFMlEAzJLHzOyY-EsrUvWCKT6vB-ZjxyNg')
+token = '5833315479:AAFMlEAzJLHzOyY-EsrUvWCKT6vB-ZjxyNg'
+bot = telebot.TeleBot(token)
 
-def getsch(dayOfWeek):
+filename = 'S-Б21-505.txt'
+
+def getsch(day_of_week):
 	try:
-		text = schedule.getsch('schedule.pdf')
+		return schedule.get_schedule(filename, day_of_week)
 	except Exception as e:
-		return 'Файл с расписанием не найден' + '\n' + str(e)
-
-	return schedule.sch_by_dow(text, dayOfWeek)
+		return 'Какая-то неполадка :(' + str(e) + ')' 
 	
 @bot.message_handler(commands=["start"])
 def start(m, res=False):
