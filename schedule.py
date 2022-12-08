@@ -1,20 +1,27 @@
-import fitz, re, fmtpdf, style, time
+import fitz, re, dataproc, style, time
 
 
 shorts = {0: ['пн', 'по'], 1: ['вт'], 2: ['ср'], 3: ['чт', 'че'], 4: ['пт', 'пя'], 5: ['су'], 6: ['вс', 'во']}
 data_path = 'C:/Python/scripts/tbot/data/'
 
 
-def get_schedule(filename_txt, weekday):
-	text = fmtpdf.load_from_txt(filename_txt)
+def sch_by_id(user_id):
+	group_name = dataproc.get_group_by_user_id(user_id)
+	text = dataproc.load_from_txt(group_name)
+
+	return text
+
+
+def get_schedule(user_id, weekday):
+	text = sch_by_id(user_id)
 	days = split_by_days(text)
-	day = sch_by_dow(days, weekday)
-	day = modify_day(day)
+	day = sch_by_day(days, weekday)
+	day = style_sch(day)
 
 	return day
 
 
-def modify_day(day):
+def style_sch(day):
 	day = style.bold_day_name(day)
 	day = style.bold_time_periods(day)
 	day = style.bold_classrooms(day)
@@ -35,7 +42,7 @@ def split_by_days(text):
 	return days
 
 
-def sch_by_dow(days, weekday):
+def sch_by_day(days, weekday):
 	day_ind = get_day_ind(weekday)
 
 	if day_ind == -1: 

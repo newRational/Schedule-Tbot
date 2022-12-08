@@ -1,3 +1,3 @@
-import fmtpdf
+import dataproc
 
-fmtpdf.pdf_to_txt('S-Б21-505.pdf')
+dataproc.pdf_to_txt('Б21-514')

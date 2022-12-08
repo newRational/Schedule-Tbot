@@ -1,4 +1,4 @@
-import re, fmtpdf
+import re, dataproc
 
 
 jam = 'q5^$@*QUR*W'
@@ -18,8 +18,6 @@ def bold_day_name(day):
 def bold_time_periods(day):
 	# В time_periods сохраним все периоды времени
 	time_periods = re.findall('\d{2}:\d{2} — \d{2}:\d{2}', day)
-
-	print(time_periods)
 
 	# Замени все строки с периодами времени на jam-последовательность
 	day = re.sub('\d{2}:\d{2} — \d{2}:\d{2}', jam, day)
