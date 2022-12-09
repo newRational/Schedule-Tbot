@@ -11,21 +11,21 @@ def get_redis_db_connection():
 
 
 def exists_user_entry(user_id):
-	redis = get_redis_db_connection()
-	if redis.exists('user:' + str(user_id)):
+	rdb = get_redis_db_connection()
+	if rdb.exists('user:' + str(user_id)):
 		return True
 	else:
 		return False
 
 
 def set_group_by_user_id(user_id, group_name):
-	redis = get_redis_db_connection()
-	redis.set('user:' + str(user_id), group_name)
+	rdb = get_redis_db_connection()
+	rdb.set('user:' + str(user_id), group_name)
 
 
 def get_group_by_user_id(user_id):
-	redis = get_redis_db_connection()
-	group_name = redis.get('user:' + str(user_id)).decode('utf-8')
+	rdb = get_redis_db_connection()
+	group_name = rdb.get('user:' + str(user_id)).decode('utf-8')
 
 	return group_name
 

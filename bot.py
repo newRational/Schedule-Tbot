@@ -1,31 +1,52 @@
-import dataproc, schedule, telebot, config
+import dataproc, schedule, telebot, config, buttons
+from telebot import types
 
 
-token = '5833315479:AAFMlEAzJLHzOyY-EsrUvWCKT6vB-ZjxyNg'
+token = config.get_token_from_db()
 bot = telebot.TeleBot(token)
 
-	
+
 @bot.message_handler(commands=['start'])
 def start(m, res=False):
-	bot.send_message(m.chat.id, 'Привет, я показываю расписание.')
+
+	markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+	
+	item1 = types.KeyboardButton('Б21-505')
+	item2 = types.KeyboardButton('Б21-514')
+
+	markup.add(item1, item2)
+
+	bot.send_message(m.chat.id, 'Привет, я показываю расписание. \nВыбирай свою группу', reply_markup=markup)
 
 
-@bot.message_handler(commands=['set_group'])
-def set_group(m, res=False):
-	msg = bot.send_message(m.chat.id, 'Введите учебную группу')
-	bot.register_next_step_handler(msg, config.set_group_name)
+@bot.message_handler(regexp='[БСМИ]\d{2}-\d{2,3}')
+def pick_day(message):
+
+	config.set_group_name(message)
+	
+	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+
+	day1 = types.KeyboardButton('Понедельник')
+	day2 = types.KeyboardButton('Вторник')
+	day3 = types.KeyboardButton('Среда')
+	day4 = types.KeyboardButton('Четверг')
+	day5 = types.KeyboardButton('Пятница')
+	day6 = types.KeyboardButton('Суббота')
+
+	markup.add(day1, day2, day3, day4, day5, day6)
+
+	bot.send_message(message.chat.id, 'Выбирай день недели', reply_markup=markup)
 
 
-@bot.message_handler(content_types=['text'])
+@bot.message_handler(regexp='[Пп]н.*|[Пп]он.*|[Вв]т.*|[Сс]р.*|[Чч]т.*|[Чч]ет.*|[Пп]т.*|[Пп]ят.*|[Сс]б.*|[Сс]уб.*|[Сс]е.*')
 def handle_weekday(message):
 	handle_user(message)
-	response = ''
 	
 	try:
 		response = schedule.get_schedule(message.from_user.id, message.text)
 	except Exception as e:
 		response = str(e)
-	
+
 	bot.send_message(message.chat.id, text=response, parse_mode="Markdown")
 
 

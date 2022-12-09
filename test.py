@@ -1,10 +1,11 @@
-import schedule
+import schedule, dataproc
 
 
 d = {'ПН': 1, 'ВТ': 2, 'СР': 3, 'ЧТ': 4, 'ПТ': 5}
 
 
-filename = 'schedule.pdf'
+group_name = 'Б21-514'
+pdf_file = dataproc.get_pdf_file(group_name)
 
 
 def raw_test(filename):
@@ -12,10 +13,10 @@ def raw_test(filename):
 	print(text)
 
 
-def clean_test(filename):
-	text = schedule.rawtext(filename)
-	text = schedule.cleantext(text)
-	text = schedule.separate_classes(text)
+def clean_test(pdf_file):
+	text = dataproc.rawtext(pdf_file)
+	text = dataproc.cleantext(text)
+	text = dataproc.separate_classes(text)
 	print(text)
 
 
@@ -24,6 +25,6 @@ def by_day_test(filename):
 
 
 # raw_test(filename)
-# clean_test(filename)
-by_day_test(filename)
+clean_test(pdf_file)
+# by_day_test(filename)
 
