@@ -1,78 +1,77 @@
-import fitz, re
-
-shorts = {1: ['пн', 'по'], 2: ['вт'], 3: ['ср'], 4: ['чт', 'че'], 5: ['пт', 'пя']}
-dn = {1: 'ПОНЕДЕЛЬНИК', 2: 'ВТОРНИК', 3: 'СРЕДА', 4: 'ЧЕТВЕРГ', 5: 'ПЯТНИЦА'}
+import fitz, re, dataproc, style, time
 
 
-auds = list()
+shorts = {0: ['пн', 'по'], 1: ['вт'], 2: ['ср'], 3: ['чт', 'че'], 4: ['пт', 'пя'], 5: ['сб', 'су'], 6: ['вс', 'во']}
+data_path = 'C:/Python/scripts/tbot/data/'
 
 
-def formtext(filename):
-	doc = fitz.open(filename)
-	text = ''
+def text_by_user_id(user_id):
+	group_name = dataproc.get_group_by_user_id(user_id)
+	text = dataproc.load_from_txt(group_name)
 
-	for page in doc:
-		text += page.get_text()
+	return text
 
-	text = re.sub('[■◩◪]', '', text)
-	text = re.sub('\(h.*\)', '', text)
-	text = re.sub('\(.*,\nh.*\)', '', text)
-	text = re.sub('\n ', '\n', text)
-	text = re.sub('\n,', ',', text)
-	text = re.sub('\n\n', '\n', text)
 
-	text = re.sub('\nПОНЕДЕЛЬНИК', '\n\n\n*ПОНЕДЕЛЬНИК', text)
-	text = re.sub('\nВТОРНИК', '\n\n\n*ВТОРНИК', text)
-	text = re.sub('\nСРЕДА', '\n\n\n*СРЕДА', text)
-	text = re.sub('\nЧЕТВЕРГ', '\n\n\n*ЧЕТВЕРГ', text)
-	text = re.sub('\nПЯТНИЦА', '\n\n\n*ПЯТНИЦА', text)
 
-	text = re.sub('\nПР', '\n*ПР*', text)
-	text = re.sub('\nЛЕК', '\n*ЛЕК*', text)
-	text = re.sub('\nЛАБ', '\n*ЛАБ*', text)
+
+def get_schedule(user_id, weekday):
+	try:
+		text = text_by_user_id(user_id)
+		days = split_by_days(text)
+		day = sch_by_day(days, weekday)
+		day = style_sch(day)
+	except Exception as e:
+		day = str(e)
+
+	return day
+
+
+def style_sch(day):
+	day = style.bold_day_name(day)
+	day = style.bold_time_periods(day)
+	day = style.bold_classrooms(day)
+
+	return day
+
+
+def split_by_days(text):
+	text = re.sub('ПОНЕДЕЛЬНИК', 'ПОНЕДЕЛЬНИК\n', text)
+	text = re.sub('\nВТОРНИК', '\n\n\nВТОРНИК\n', text)
+	text = re.sub('\nСРЕДА', '\n\n\nСРЕДА\n', text)
+	text = re.sub('\nЧЕТВЕРГ', '\n\n\nЧЕТВЕРГ\n', text)
+	text = re.sub('\nПЯТНИЦА', '\n\n\nПЯТНИЦА\n', text)
+	text = re.sub('\nСУББОТА', '\n\n\nСУББОТА\n', text)
 
 	days = text.split('\n\n\n')
 
 	return days
 
 
-def get_by_day_of_week(days, dayOfWeek):
-	day_ind = get_day_ind(dayOfWeek)
+def sch_by_day(days, weekday):
+	day_ind = get_day_ind(weekday)
 
-	if day_ind == -1: 
-		return 'Неверный ввод дня недели'
+	try:
+		return days[day_ind].strip()
+	except Exception as e:
+		raise Exception('У тебя нет пар в выбранный день')
 
-	day = days[day_ind]
-	
-	auds = re.findall('\n[А-Я]-\d{3}.?|\nДОТ|\nНЛК-\d{3}|\n\d{3}|\nкаф. 15/3', day)
-
-	l = len(auds)
-
-	day = re.sub('\n[А-Я]-\d{3}.?|\nДОТ|\nНЛК-\d{3}|\n\d{3}|\nкаф. 15/3', '\n\n', day)
-
-	pairs = day.split('\n\n')
-
-	full = ''
-
-	for i in range(0, l):
-		pairs[i] += auds[i] + '\n'
-
-	for i in range(0, l):
-		full += pairs[i]
-
-	full = re.sub('[A-Я]{5,11}', dn[day_ind] + '*\n', full).strip()
-
-	print(full)
-
-	return full
+	return days[day_ind].strip()
 
 
-def get_day_ind(dayOfWeek):
-	dayOfWeek = dayOfWeek.lower()
+def get_day_ind(weekday):
+	weekday = weekday.lower()
 
-	for x in shorts:
-		for y in shorts[x]:
-			if re.match(y + '[а-я]*', dayOfWeek):
-				return x
+	for day_ind in shorts:
+		for short in shorts[day_ind]:
+			if re.match(short + '[а-я]*', weekday):
+				return day_ind
+
+	if re.match('се[а-я]*', weekday):
+		return get_today_day_ind(weekday)
 
 	return -1
+
+
+def get_today_day_ind(weekday):
+	now = time.localtime()
+	return now.tm_wday
