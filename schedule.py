@@ -5,18 +5,23 @@ shorts = {0: ['пн', 'по'], 1: ['вт'], 2: ['ср'], 3: ['чт', 'че'], 4:
 data_path = 'C:/Python/scripts/tbot/data/'
 
 
-def text_by_id(user_id):
+def text_by_user_id(user_id):
 	group_name = dataproc.get_group_by_user_id(user_id)
 	text = dataproc.load_from_txt(group_name)
 
 	return text
 
 
+
+
 def get_schedule(user_id, weekday):
-	text = text_by_id(user_id)
-	days = split_by_days(text)
-	day = sch_by_day(days, weekday)
-	day = style_sch(day)
+	try:
+		text = text_by_user_id(user_id)
+		days = split_by_days(text)
+		day = sch_by_day(days, weekday)
+		day = style_sch(day)
+	except Exception as e:
+		day = str(e)
 
 	return day
 
