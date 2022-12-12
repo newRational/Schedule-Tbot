@@ -8,8 +8,9 @@ group_name = 'Б21-514'
 pdf_file = dataproc.get_pdf_file(group_name)
 
 
-def raw_test(filename):
-	text = schedule.rawtext(filename)
+def raw_test(group_name):
+	pdf_file = dataproc.get_pdf_file(group_name)
+	text = dataproc.rawtext(pdf_file)
 	print(text)
 
 
@@ -24,7 +25,7 @@ def by_day_test(filename):
 	print(schedule.get_schedule('S-Б21-505.txt', 'пон'))
 
 
-# raw_test(filename)
+# raw_test(group_name)
 clean_test(pdf_file)
 # by_day_test(filename)
 

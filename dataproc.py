@@ -82,13 +82,28 @@ def rawtext(pdf_file):
 
 
 def cleantext(text):
-	text = re.sub('[■◩◪]', '', text)
+	# Удаление символа 'указатель геолокации' - предваряет аудиторию
+	text = re.sub('', '', text)
+
+	# Удаление символа 'знак восклицания в кружочке' - предваряет подгруппу (пр. в английском, в лабах по инфе)
+	text = re.sub('', '', text)
+
+	# Удаление символа четности/нечетности учебной недели
+	text = re.sub('[■◩◪]', '', text)
+
+	# Удаление ссылок
 	text = re.sub('\(?http[^()]*\)', '', text)
+
+	# Замена символа ' ' (типа пробел), который стоит перед тире во времени (пр. 10:15 — 11:50)
 	text = re.sub(' ', ' ', text)
+
 	text = re.sub('\n ', '\n', text)
 	text = re.sub('\n,', ',', text)
 	text = re.sub('\n\n', '\n', text)
 	text = re.sub(get_title(text), '', text)
+
+	# Удаление символа 'квадратная академическая шапочка' ФИО преподавателя
+	text = re.sub('.*', '', text)
 
 	return text
 
@@ -101,6 +116,8 @@ def get_title(text):
 
 
 def separate_classes(text):
+	jam = 'q5^$@*QUR*W'
+
 	# В classrooms сохраним все аудитории
 	classrooms = re.findall('\n[А-Я]-\d{3}.?|\nДОТ|\nНЛК-\d{3}|\n\d{3}|\nкаф.*', text)
 
@@ -115,6 +132,6 @@ def separate_classes(text):
 	# Соберем весь текст воедино, добавив в конце записи каждой пары
 	# строку с соответствующей аудиторией
 	for i in range(0, len(classrooms)):
-		text += classes[i] + classrooms[i] + '\n\n'
+		text += classes[i] + classrooms[i] + '\n'
 
 	return text.strip()

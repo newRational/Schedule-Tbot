@@ -12,8 +12,6 @@ def text_by_user_id(user_id):
 	return text
 
 
-
-
 def get_schedule(user_id, weekday):
 	try:
 		text = text_by_user_id(user_id)

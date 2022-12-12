@@ -24,7 +24,7 @@ def create_group_buttons():
 
 
 def weekday_buttons_markup():
-	markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+	markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 	weekday_buttons = create_weekday_buttons()
 	
 	markup.add(types.KeyboardButton('Сегодня'))
