@@ -2,14 +2,16 @@ import dataproc, schedule, telebot, config, buttons
 from telebot import types
 
 
-token = config.get_token_from_db()
+token = config.token_from_db()
 bot = telebot.TeleBot(token)
 
 
 @bot.message_handler(commands=['start'])
 def start(message, res=False):
 	markup = buttons.group_buttons_markup()
-	bot.send_message(message.chat.id, 'Привет, я показываю расписание. \nВыбирай группу', reply_markup=markup)
+	bot.send_message(message.chat.id, 
+		'Привет, я показываю расписание\nВыбирай группу',
+		reply_markup=markup)
 
 
 @bot.message_handler(regexp='Выбрать группу')
