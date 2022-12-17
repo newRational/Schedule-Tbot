@@ -1,7 +1,7 @@
 import dataproc
 
 
-def get_token_from_db():
+def token_from_db():
 	rdb = dataproc.get_redis_db_connection()
 	return rdb.get('telebot:token').decode('utf-8')
 

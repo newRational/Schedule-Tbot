@@ -1,3 +1,3 @@
 import dataproc
 
-dataproc.pdf_to_txt('Б21-514')
+dataproc.sch_to_rdb('Б21-505')

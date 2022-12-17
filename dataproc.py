@@ -20,12 +20,12 @@ def exists_user_entry(user_id):
 
 def set_group_by_user_id(user_id, group_name):
 	rdb = get_redis_db_connection()
-	rdb.set('user:' + str(user_id), group_name)
+	rdb.hset('user_id:group_name', str(user_id), group_name)
 
 
 def get_group_by_user_id(user_id):
 	rdb = get_redis_db_connection()
-	group_name = rdb.get('user:' + str(user_id)).decode('utf-8')
+	group_name = rdb.hget('user_id:group_name', str(user_id)).decode('utf-8')
 
 	return group_name
 
@@ -44,6 +44,17 @@ def pdf_to_txt(group_name):
 	f = open(data_path + group_name + '/schedule.txt', 'w')
 	f.write(text)
 	f.close()
+
+
+def sch_from_rdb(group_name):
+	rdb = get_redis_db_connection()
+	return rdb.hget('group_name:schedule', group_name).decode('utf-8')
+
+
+def sch_to_rdb(group_name):
+	rdb = get_redis_db_connection()
+	text = load_from_txt(group_name)
+	rdb.hset('group_name:schedule', group_name, text)
 
 
 def load_from_txt(group_name):

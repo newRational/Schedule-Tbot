@@ -7,7 +7,7 @@ data_path = 'C:/Python/scripts/tbot/data/'
 
 def text_by_user_id(user_id):
 	group_name = dataproc.get_group_by_user_id(user_id)
-	text = dataproc.load_from_txt(group_name)
+	text = dataproc.sch_from_rdb(group_name)
 
 	return text
 
